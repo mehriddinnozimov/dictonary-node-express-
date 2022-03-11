@@ -1,0 +1,102 @@
+<html>
+  
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  </head>
+  <body class="bg-dark">
+    <div class="container text-light">
+      <h1 class="h1 text-center mt-3 text-primary">My dictonary</h1>
+      <div class="row mt-3">
+        <div class="col-8">
+          <form action="/post/" method="post" class="form form-inline form-control bg-dark text-white">
+            <div class="form-group">
+              <label for="en" class="form-label">English:</label>
+              <input type="text" class="form-control form-control-sm" name="en" id="en">
+            </div>
+            <div class="form-group">
+              <label for="uz" class="form-label">Uzbek</label>
+              <input type="text" class="form-control form-control-sm" name="uz" id="uz">
+            </div>
+            <div class="form-group row mt-3">
+              <div class="col-4">          
+                <input type="submit" value="Add" class="btn btn-primary w-100">
+              </div>
+              <div class="col-6">
+                <input type="text" class="form-control" placeholder="Search..." id="search">
+              </div>
+              <div class="col-2">Count: <span id="count" class="text-primary">0</span></div>
+            </div>
+          </form>
+        </div>
+        <div class="col-4 text-center container">
+          <h2 class="text-primary">Find Word</h2>
+          <div>
+            <h4><span class="lang">En:</span> <span class="word">Word</span></h4>
+            <input type="text" name="" id="word2" class="form-control">
+            <button class="btn btn-primary mt-3 mb-2 check">Check</button>
+            <p style="font-size: 10px;">Correct <span class="correct text-primary">0</span>, Wrong: <span class="wrong text-danger">0</span></p>
+          </div>
+
+        </div>
+      </div>
+      
+      <table class="table table-dark">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">English</th>
+            <th scope="col">Uzbek</th>
+            <th scope="col">Checked?</th>
+          </tr>
+        </thead>
+        <tbody class="tbody">
+        </tbody>
+      </table>
+    </div>
+    
+    <script>
+      let list = <%- JSON.stringify(list) %>;
+
+      var ranWord = Math.floor(Math.random() * list.length),
+        ranLang = Math.floor(Math.random() * 2),
+        lang = document.querySelector(".lang"),
+        word = document.querySelector(".word"),
+        word2 = document.querySelector("#word2"),
+        check = document.querySelector(".check"),
+        correct = document.querySelector(".correct"),
+        wrong = document.querySelector(".wrong");
+      
+      load(list)
+      game(list)
+      document.getElementById("search").addEventListener("change", (e) => {
+        load(list.filter(el => el.en.toLowerCase().includes(e.target.value.toLowerCase())))
+      })
+      function game(list){
+        ranWord = Math.floor(Math.random() * list.length)
+        ranLang = Math.floor(Math.random() * 2)
+        lang.innerHTML = ["En: ", "Uz: "][ranLang]
+        word.innerHTML = list[ranWord][["en", "uz"][ranLang]]
+      }
+
+      check.addEventListener("click", () => {
+        word2.value == list[ranWord][["uz", "en"][ranLang]] ? correct.innerHTML = Number(correct.innerHTML) + 1 : wrong.innerHTML = Number(wrong.innerHTML) + 1;
+        game(list)
+      })
+
+
+
+      function load(list){
+        document.getElementById("count").innerHTML = list.length;
+        document.querySelector("tbody").innerHTML = (list.map(function(el, index){
+          return `<tr>
+            <th scope="row"> ${index + 1}</th>
+            <td>${el.en}</td>
+            <td>${el.uz}</td>
+            <td><input type="checkbox" name="checked" id=""></td>
+            </tr>`
+        })).join(" ")
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+  </body>
+</html>
